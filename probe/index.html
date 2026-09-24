@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <!--
+    Voice probe (INT-002, H-007). Throwaway: removed with spikes/voice-probe/.
+    Same origin as the app so the Firebase browser key's referrer list accepts it and a
+    session the app already has is reused. Its own CSP, stricter than the app's: no
+    inline script or style, and data goes only to the probe Worker and Firebase Auth.
+  -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self';
+    style-src 'self';
+    img-src 'self' data:;
+    media-src 'self' blob:;
+    connect-src 'self' https://vprok-voice-probe.kufar-watchbot.workers.dev https://identitytoolkit.googleapis.com https://securetoken.googleapis.com;
+    manifest-src 'self';
+    object-src 'none';
+    base-uri 'self';
+    form-action 'none'
+  ">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Проба голоса">
+  <link rel="apple-touch-icon" href="../icons/Icon-192.png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="probe.css">
+  <title>Впрок — проба голоса</title>
+</head>
+<body>
+  <main>
+    <h1>Проба: траты голосом</h1>
+
+    <section id="server" class="card">
+      <div id="server-status">Проверяю сервер…</div>
+    </section>
+
+    <section id="signin" class="card" hidden>
+      <h2>Вход</h2>
+      <p class="muted">Та же почта и пароль, что во Впрок.</p>
+      <label>Почта <input id="email" type="email" autocomplete="username" inputmode="email"></label>
+      <label>Пароль <input id="password" type="password" autocomplete="current-password"></label>
+      <button id="signin-btn" class="primary">Войти</button>
+      <div id="signin-error" class="error" hidden></div>
+    </section>
+
+    <section id="recorder" class="card" hidden>
+      <div class="row">
+        <strong id="counter">Фраза 1 из 20</strong>
+        <label class="inline">Формат
+          <select id="format">
+            <option value="native">Как пишет телефон</option>
+            <option value="wav">WAV (запасной)</option>
+          </select>
+        </label>
+      </div>
+      <p class="muted">Скажите одну фразу, как в жизни: «купил макароны за два девяносто и заправился на шестьдесят».</p>
+      <button id="record-btn" class="record">Записать</button>
+      <div id="record-hint" class="muted center"></div>
+    </section>
+
+    <section id="mic-question" class="card" hidden>
+      <p>Телефон сейчас спрашивал разрешение на микрофон?</p>
+      <div class="row">
+        <button data-mic="yes">Да, спрашивал</button>
+        <button data-mic="no">Нет</button>
+      </div>
+    </section>
+
+    <section id="result" class="card" hidden>
+      <div id="result-body"></div>
+      <div id="marks" hidden>
+        <div class="mark-row">
+          <span>Суммы</span>
+          <button data-mark="amounts" data-value="ok">Все верны</button>
+          <button data-mark="amounts" data-value="wrong">Есть ошибка</button>
+        </div>
+        <div class="mark-row">
+          <span>Категории</span>
+          <button data-mark="categories" data-value="ok">Все верны</button>
+          <button data-mark="categories" data-value="wrong">Есть ошибка</button>
+        </div>
+      </div>
+      <div class="row" id="reparse" hidden>
+        <select id="model">
+          <option value="@cf/qwen/qwen3-30b-a3b-fp8">Qwen3 30B</option>
+          <option value="@cf/google/gemma-4-26b-a4b-it">Gemma 4 26B</option>
+          <option value="@cf/meta/llama-3.3-70b-instruct-fp8-fast">Llama 3.3 70B</option>
+        </select>
+        <button id="reparse-btn">Разобрать другой моделью</button>
+      </div>
+      <div class="row">
+        <button id="retry-btn" hidden>Отправить ещё раз</button>
+        <button id="next-btn" class="primary" hidden>Следующая фраза</button>
+      </div>
+    </section>
+
+    <section id="report" class="card" hidden>
+      <h2>Итог</h2>
+      <div id="summary"></div>
+      <div class="row">
+        <button id="send-report-btn" class="primary">Отправить отчёт</button>
+        <button id="copy-report-btn">Скопировать отчёт</button>
+      </div>
+      <div id="report-status" class="muted"></div>
+      <ol id="history" class="history"></ol>
+      <button id="clear-btn" class="danger">Начать заново</button>
+    </section>
+  </main>
+  <script type="module" src="probe.js"></script>
+</body>
+</html>

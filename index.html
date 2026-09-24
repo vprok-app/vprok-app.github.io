@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <!-- Replaced by the value of `flutter build web --base-href`. -->
+  <base href="/">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+
+  <!--
+    ADR-0008, narrowed by ADR-0010: the browser, not a convention, enforces
+    where code and data come from. Everything of ours ships from our own origin.
+    The exceptions are reCAPTCHA's script and challenge frame, which App Check
+    requires and which cannot be self-hosted — that is the whole cost of
+    ADR-0010, and it is written down there. 'wasm-unsafe-eval' is what CanvasKit
+    needs to instantiate its WebAssembly; 'unsafe-inline' for styles is what
+    Flutter's engine injects at runtime.
+  -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'wasm-unsafe-eval' https://www.google.com https://www.gstatic.com;
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data: blob:;
+    font-src 'self';
+    worker-src 'self' blob:;
+    child-src 'self' blob:;
+    manifest-src 'self';
+    connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://content-firebaseappcheck.googleapis.com https://www.google.com;
+    frame-src https://www.google.com;
+    object-src 'none';
+    base-uri 'self';
+    form-action 'none'
+  ">
+  <meta name="description" content="Впрок — семейный бюджет с целью.">
+
+  <!-- Home-screen web app on iOS (ADR-0001). -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-title" content="Впрок">
+  <meta name="theme-color" content="#FAF7F2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1C1916" media="(prefers-color-scheme: dark)">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>Впрок</title>
+  <link rel="manifest" href="manifest.json">
+  <!-- Paint color.surface before the first Flutter frame, so the cold launch
+       is not a white flash. -->
+  <style>
+    html, body { background: #FAF7F2; margin: 0; }
+    @media (prefers-color-scheme: dark) { html, body { background: #1C1916; } }
+  </style>
+</head>
+<body>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
